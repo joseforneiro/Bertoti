@@ -14,3 +14,77 @@ A arquitetura REST possui uma série de regras e princípios que devem ser segui
 * **Cache:** É utilizado para melhorar a performance de comunicação entre aplicações, otimizando o tempo de resposta na comunicação entre cliente-servidor.
 * **Camadas:** Nesse modelo, o cliente não deve conectar-se diretamente ao servidor da aplicação, porém uma camada de balanceamento de carga deverá ser acionada para essa responsabilidade.
 ![image](https://user-images.githubusercontent.com/51200164/171039474-1a83ebe1-d8df-4288-b37c-f886d648c597.png)
+## 2.2- Detalhes
+* **Declaração da Rota e variáveis a serem inseridas no Postman:**
+```c#
+
+```
+<br>
+
+* **Envia para a classe FillDateValidation(auctionNumber,portal,account) para verificar se o auctionNumber, portal e account estão preenchidos:**
+```c#
+
+```
+<br>
+
+* **Classe FillDateValidation:**
+```c#
+
+```
+<br>
+
+* **Envia para a classe ValidatePortal(portal) para verificar se o portal é válido.**
+```c#
+
+```
+<br>
+
+* **Classe ValidatePortal:**
+```c#
+
+```
+<br>
+
+* **Envia para a classe DateValidationC para verificação se a data é Válida:**
+```c#
+
+```
+<br>
+
+* **Classe DateValidationC: (Feita com regex)**
+```c#
+
+```
+<br>
+
+* **Se o pregão for do BB, pega o status do pregão solicitado, verifica o status do pregão e pega as datas do pregão:**
+```c#
+
+```
+<br>
+
+* **Faz a comparação das datas do pregão que estão no banco com as novas datas. Se as novas datas forem iguais do banco ou nulas, passa para a próxima data:**
+```c#
+
+```
+<br>
+
+* **Se o pregão for do CN ou BEC, verifica se o buyerUnit está preenchido, pega o status do pregão solicitado, verifica o status do pregão e pega as datas do pregão:**
+```c#
+
+```
+<br>
+
+* **Faz a comparação das datas do pregão que estão no banco com as novas datas. Se as novas datas forem iguais do banco ou nulas, passa para a próxima data:**
+```c#
+
+```
+<br>
+
+* **Caso o portal seja do CN ou BEC e o buyerUnit não esteja preenchido:**
+```c#
+
+```
+<br>
+* **Tela do Postman:**
+![image](https://user-images.githubusercontent.com/51200164/171040109-dd12ff73-f93e-40db-bed1-4988d0865b1b.png)
