@@ -13,7 +13,10 @@ A arquitetura REST possui uma série de regras e princípios que devem ser segui
 * **Stateless:** Cada requisição acionada entre a comunicação cliente-servidor deve possuir toda a informação necessária e compreensível para realizar a origem da requisição, não sendo de responsabilidade do servidor armazenar qualquer tipo de contexto. Isso pode gerar alto tráfego de dados e impacto na performance da aplicação, porém pode-se utilizar recursos de cache nesses casos.
 * **Cache:** É utilizado para melhorar a performance de comunicação entre aplicações, otimizando o tempo de resposta na comunicação entre cliente-servidor.
 * **Camadas:** Nesse modelo, o cliente não deve conectar-se diretamente ao servidor da aplicação, porém uma camada de balanceamento de carga deverá ser acionada para essa responsabilidade.
+<br>
+
 ![image](https://user-images.githubusercontent.com/51200164/171039474-1a83ebe1-d8df-4288-b37c-f886d648c597.png)
+
 ## 2.2- Detalhes
 * **Declaração da Rota e variáveis a serem inseridas no Postman:**
 ```c#
@@ -145,27 +148,114 @@ if (portal == "BB")
 
 * **Faz a comparação das datas do pregão que estão no banco com as novas datas. Se as novas datas forem iguais do banco ou nulas, passa para a próxima data:**
 ```c#
+if (dateTp1 != targetPorposal && !string.IsNullOrEmpty(targetPorposal))
+                {
+                    var data = Convert.ToDateTime(targetPorposal, Culture).AddHours(3);
+                    opportunity.TargetProposal = data;
+                    opportunity.TargetOperational = data;
+                    opportunity.TargetClient = data;
 
+                    resultadoTp = "targuet_proposal";
+                }
+
+                if (dateAd1 != auctionDate && !string.IsNullOrEmpty(auctionDate))
+                {
+                    var data1 = Convert.ToDateTime(auctionDate, Culture).AddHours(3);
+                    opportunity.AuctionDate = data1;
+                    resultadoAd = "auction_date";
+                }
+
+                if (datePd1 != publishDate && !string.IsNullOrEmpty(publishDate))
+                {
+                    var data2 = Convert.ToDateTime(publishDate, Culture).AddHours(3);
+                    opportunity.PublishDate = data2;
+                    resultadoPd = "publish_date";
+                }
+
+                if (dateItp1 != initialTargetProposal && !string.IsNullOrEmpty(initialTargetProposal))
+                {
+                    var data3 = Convert.ToDateTime(initialTargetProposal, Culture).AddHours(3);
+                    opportunity.InitialTargetProposal = data3;
+                    resultadoItp = "initial_target_proposal";
+                }
 ```
 <br>
 
 * **Se o pregão for do CN ou BEC, verifica se o buyerUnit está preenchido, pega o status do pregão solicitado, verifica o status do pregão e pega as datas do pregão:**
 ```c#
+if ((portal == "CN" || portal == "BEC") && !string.IsNullOrEmpty(buyerUnit))
+            {
 
+                var aflow = await context.TblAuctionFlow.Where(x => x.AuctionNumber == auctionNumber && x.BuyerUnit == buyerUnit && x.Account == account && x.Portal == portal).FirstOrDefaultAsync();
+
+                var auctionStatus = aflow.StatusName.ToString();
+
+                if (auctionStatus == "OPEN" || auctionStatus == "REFUSED" || auctionStatus == "PENDING_REGISTER" || auctionStatus == "PENDING_RESULT" || auctionStatus == "HOMOLOGATED")
+                    return BadRequest(new { message = "As datas não podem ser alteradas para o pregão com status " + auctionStatus });
+
+                var opportunity = await context.TblOpportunity.Where(x => x.AuctionNumber == auctionNumber && x.BuyerUnit == buyerUnit && x.Account == account && x.Portal == portal).FirstOrDefaultAsync();
+
+                var dateTp1 = opportunity.TargetProposal.ToString("dd/MM/yyyy HH:mm:ss");
+                var dateAd1 = opportunity.AuctionDate.ToString("dd/MM/yyyy HH:mm:ss");
+                var datePd1 = opportunity.PublishDate.ToString("dd/MM/yyyy HH:mm:ss");
+                var dateItp1 = opportunity.InitialTargetProposal.ToString("dd/MM/yyyy HH:mm:ss");
+
+                CultureInfo Culture = new CultureInfo("pt-BR");
 ```
 <br>
 
 * **Faz a comparação das datas do pregão que estão no banco com as novas datas. Se as novas datas forem iguais do banco ou nulas, passa para a próxima data:**
 ```c#
+if (dateTp1 != targetPorposal && !string.IsNullOrEmpty(targetPorposal))
+                {
+                    var data = Convert.ToDateTime(targetPorposal, Culture).AddHours(3);
+                    opportunity.TargetProposal = data;
+                    opportunity.TargetOperational = data;
+                    opportunity.TargetClient = data;
 
+                    resultadoTp = "targuet_proposal";
+                }
+
+                if (dateAd1 != auctionDate && !string.IsNullOrEmpty(auctionDate))
+                {
+                    var data1 = Convert.ToDateTime(auctionDate, Culture).AddHours(3);
+                    opportunity.AuctionDate = data1;
+                    resultadoAd = "auction_date";
+                }
+
+                if (datePd1 != publishDate && !string.IsNullOrEmpty(publishDate))
+                {
+                    var data2 = Convert.ToDateTime(publishDate, Culture).AddHours(3);
+                    opportunity.PublishDate = data2;
+                    resultadoPd = "publish_date";
+                }
+
+                if (dateItp1 != initialTargetProposal && !string.IsNullOrEmpty(initialTargetProposal))
+                {
+                    var data3 = Convert.ToDateTime(initialTargetProposal, Culture).AddHours(3);
+                    opportunity.InitialTargetProposal = data3;
+                    resultadoItp = "initial_target_proposal";
+                }
 ```
 <br>
 
 * **Caso o portal seja do CN ou BEC e o buyerUnit não esteja preenchido:**
 ```c#
+if ((portal == "CN" || portal == "BEC") && string.IsNullOrEmpty(buyerUnit))
+                return BadRequest(new { message = "É obrigatório o preenchimento do campo buyer_unit para os portais CN ou BEC" });
+        
 
+            context.SaveChanges();
+            return Ok(new { message = "Datas alteradas: " + resultadoTp + " - " + resultadoAd +  " - " + resultadoPd +  " - " + resultadoItp });
+            }
+            catch
+            {
+                return BadRequest(new { message = "Pregão não encontrado" });
+            }
 ```
 <br>
 
 * **Tela do Postman:**
+<br>
+
 ![image](https://user-images.githubusercontent.com/51200164/171040109-dd12ff73-f93e-40db-bed1-4988d0865b1b.png)
