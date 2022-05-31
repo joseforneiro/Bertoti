@@ -103,7 +103,7 @@ public static bool ValidatePortal(string portal)
 
 * **Envia para a classe DateValidationC para verificação se a data é Válida:**
 ```c#
-            Declaração das variáveis para para as datas Target Proposal, Auction Date, Publish Date e Initial Targuet Proposal
+            // Declaração das variáveis para para as datas Target Proposal, Auction Date, Publish Date e Initial Targuet Proposal
             bool validateTp = true;
             bool validateAd = true;
             bool validatePd = true;
